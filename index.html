@@ -65,6 +65,51 @@
             margin-bottom: 24px;
         }
 
+        /* 设置栏 */
+        .options-bar {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(13, 17, 23, 0.5);
+            padding: 12px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+        }
+
+        .options-bar label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        select {
+            background-color: var(--input-bg);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 6px 32px 6px 12px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            appearance: none;
+            cursor: pointer;
+            /* 模拟下拉箭头 */
+            background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238b949e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 8px center;
+        }
+
+        select:focus {
+            border-color: var(--focus-ring);
+            box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.3);
+        }
+
+        select option {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+        }
+
         /* 双栏布局 */
         .split-layout {
             display: flex;
@@ -188,11 +233,22 @@
         
         <p>粘贴包含 CDK 的杂乱文本（备注、游戏名等），工具将自动提取 5x5 格式的 CDK 并进行去重：</p>
         
+        <!-- 顶部格式选项 -->
+        <div class="options-bar">
+            <label for="format-select">输出格式：</label>
+            <select id="format-select" onchange="extractCDK()">
+                <option value="comma">英文逗号分隔 (CDK1,CDK2)</option>
+                <option value="newline">每行一个 (CDK1回车CDK2)</option>
+                <option value="space">空格分隔 (CDK1 CDK2)</option>
+                <option value="semicolon">英文分号分隔 (CDK1;CDK2)</option>
+            </select>
+        </div>
+
         <div class="split-layout">
             <!-- 左侧：输入区 -->
             <div class="pane flex-col">
                 <div class="pane-header">数据来源</div>
-                <textarea id="input" placeholder="将文本粘贴到这里... (例如: 感谢您的购买 12345-ABCDE-12345-ABCDE-12345)"></textarea>
+                <textarea id="input" placeholder="将文本粘贴到这里... (例如: 感谢您的购买 12345-ABCDE-12345-ABCDE-12345)" oninput="extractCDK()"></textarea>
                 <button class="primary" onclick="extractCDK()">
                     <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M11.5 7a4.499 4.499 0 11-8.998 0A4.499 4.499 0 0111.5 7zm-.82 4.74a6 6 0 111.06-1.06l3.04 3.04a.75.75 0 11-1.06 1.06l-3.04-3.04z"></path></svg>
                     提取并去重
@@ -224,10 +280,22 @@
             
             const resultBox = document.getElementById('result');
             const countSpan = document.getElementById('count');
+            const format = document.getElementById('format-select').value;
 
             if (matches) {
                 const uniqueCDKs = [...new Set(matches.map(s => s.toUpperCase()))];
-                currentResult = uniqueCDKs.join('\n'); // 左右分栏情况下，用回车换行更清晰
+                
+                // 根据选项拼接字符串
+                if (format === 'comma') {
+                    currentResult = uniqueCDKs.join(',');
+                } else if (format === 'newline') {
+                    currentResult = uniqueCDKs.join('\n');
+                } else if (format === 'space') {
+                    currentResult = uniqueCDKs.join(' ');
+                } else if (format === 'semicolon') {
+                    currentResult = uniqueCDKs.join(';');
+                }
+
                 resultBox.innerText = currentResult;
                 resultBox.classList.add('has-content');
                 countSpan.innerText = uniqueCDKs.length;
