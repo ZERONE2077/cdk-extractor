@@ -1,38 +1,230 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CDK 自动提炼工具</title>
     <style>
-        body { font-family: sans-serif; padding: 20px; max-width: 800px; margin: auto; background: #f4f7f6; }
-        textarea { width: 100%; height: 200px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #ccc; padding: 10px; }
-        button { background: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; }
-        button:hover { background: #218838; }
-        #result { background: white; padding: 15px; border: 1px dashed #28a745; margin-top: 20px; word-break: break-all; border-radius: 8px; }
+        :root {
+            --bg-color: #0d1117;
+            --container-bg: #161b22;
+            --text-primary: #c9d1d9;
+            --text-secondary: #8b949e;
+            --border-color: #30363d;
+            --btn-primary-bg: #238636;
+            --btn-primary-hover: #2ea043;
+            --btn-primary-text: #ffffff;
+            --input-bg: #0d1117;
+            --focus-ring: #58a6ff;
+            --success-color: #3fb950;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            line-height: 1.5;
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background-color: var(--container-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 32px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+        }
+
+        h2 {
+            margin-top: 0;
+            font-size: 24px;
+            font-weight: 600;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        h2 svg {
+            fill: var(--text-primary);
+        }
+
+        p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 200px;
+            background-color: var(--input-bg);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 12px;
+            font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
+            font-size: 14px;
+            margin-bottom: 16px;
+            box-sizing: border-box;
+            resize: vertical;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--focus-ring);
+            box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.3);
+        }
+
+        textarea::placeholder {
+            color: #484f58;
+        }
+
+        button.primary {
+            background-color: var(--btn-primary-bg);
+            color: var(--btn-primary-text);
+            border: 1px solid rgba(240, 246, 252, 0.1);
+            padding: 8px 16px;
+            font-size: 14px;
+            font-weight: 500;
+            line-height: 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s, border-color 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        button.primary:hover {
+            background-color: var(--btn-primary-hover);
+        }
+
+        .result-container {
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        #result {
+            background-color: var(--bg-color);
+            color: var(--text-secondary);
+            padding: 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
+            font-size: 14px;
+            word-break: break-all;
+            min-height: 40px;
+            cursor: pointer;
+            transition: border-color 0.2s, color 0.2s;
+            position: relative;
+        }
+
+        #result:hover {
+            border-color: var(--text-secondary);
+        }
+
+        #result.has-content {
+            color: var(--success-color);
+            border-color: var(--btn-primary-bg);
+        }
+
+        #result.has-content:hover {
+            border-color: var(--success-color);
+        }
+        
+        .copy-hint {
+            display: none;
+            position: absolute;
+            right: 12px;
+            top: 12px;
+            background: rgba(48, 54, 61, 0.9);
+            color: var(--text-primary);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            pointer-events: none;
+        }
+        
+        #result:hover .copy-hint {
+            display: block;
+        }
     </style>
 </head>
 <body>
-    <h2>CDK 自动提炼工具</h2>
-    <p>粘贴包含 CDK 的杂乱文本（备注、游戏名等）：</p>
-    <textarea id="input" placeholder="粘贴到这里..."></textarea>
-    <button onclick="extractCDK()">提取并去重</button>
+    <div class="container">
+        <h2>
+            <svg width="24" height="24" viewBox="0 0 16 16" version="1.1" aria-hidden="true"><path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>
+            CDK 自动提炼工具
+        </h2>
+        
+        <p>粘贴包含 CDK 的杂乱文本（备注、游戏名等），工具将自动提取 5x5 格式的 CDK 并进行去重：</p>
+        
+        <textarea id="input" placeholder="将文本粘贴到这里... (例如: 游戏感谢您的购买 12345-ABCDE-12345-ABCDE-12345)"></textarea>
+        
+        <button class="primary" onclick="extractCDK()">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M11.5 7a4.499 4.499 0 11-8.998 0A4.499 4.499 0 0111.5 7zm-.82 4.74a6 6 0 111.06-1.06l3.04 3.04a.75.75 0 11-1.06 1.06l-3.04-3.04z"></path></svg>
+            提取并去重
+        </button>
 
-    <div id="result" title="点击可直接复制">提取结果将显示在这里...</div>
+        <div class="result-container">
+            <p style="margin-bottom: 8px;">提取结果：</p>
+            <div id="result" title="点击即可复制到剪贴板" onclick="copyResult()">
+                <span id="result-text">提取结果将显示在这里...</span>
+                <span class="copy-hint" id="copy-hint">点击复制</span>
+            </div>
+        </div>
+    </div>
 
     <script>
+        let currentResult = "";
+
         function extractCDK() {
             const text = document.getElementById('input').value;
             // 正则匹配 5x5 格式
             const regex = /[A-Z0-9]{5}-[A-Z0-9]{5}-[A-Z0-9]{5}-[A-Z0-9]{5}-[A-Z0-9]{5}/gi;
             const matches = text.match(regex);
             
+            const resultBox = document.getElementById('result');
+            const resultTextEl = document.getElementById('result-text');
+
             if (matches) {
                 // 去重逻辑
                 const uniqueCDKs = [...new Set(matches.map(s => s.toUpperCase()))];
-                const resultText = uniqueCDKs.join(',');
-                document.getElementById('result').innerText = resultText;
+                currentResult = uniqueCDKs.join(',');
+                resultTextEl.innerText = currentResult;
+                resultBox.classList.add('has-content');
+                document.getElementById('copy-hint').innerText = "点击复制";
             } else {
-                document.getElementById('result').innerText = "未找到符合条件的 CDK";
+                currentResult = "";
+                resultTextEl.innerText = "未找到符合条件的 CDK";
+                resultBox.classList.remove('has-content');
+                document.getElementById('copy-hint').innerText = "无内容可复制";
             }
+        }
+
+        function copyResult() {
+            if (!currentResult) return;
+            navigator.clipboard.writeText(currentResult).then(() => {
+                const hint = document.getElementById('copy-hint');
+                hint.innerText = "复制成功！";
+                setTimeout(() => {
+                    if (document.getElementById('result').classList.contains('has-content')) {
+                        hint.innerText = "点击复制";
+                    }
+                }, 2000);
+            }).catch(err => {
+                alert('复制失败，请手动选择复制');
+            });
         }
     </script>
 </body>
