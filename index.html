@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,16 +17,18 @@
             --btn-primary-bg: #238636;
             --btn-primary-hover: #2ea043;
             --btn-primary-text: #ffffff;
-            --btn-secondary-bg: #21262d;
-            --btn-secondary-hover: #30363d;
             --input-bg: #0d1117;
             --focus-ring: #58a6ff;
             --success-color: #3fb950;
-            --dropzone-bg: rgba(35, 134, 54, 0.08);
-            --dropzone-border: #2ea043;
         }
 
-        * { box-sizing: border-box; }
+        html, body {
+            height: 100%;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
@@ -33,49 +36,100 @@
             color: var(--text-primary);
             line-height: 1.5;
             margin: 0;
-            padding: 40px 20px;
+            padding: 24px;
             display: flex;
+            align-items: center;
             justify-content: center;
         }
 
         .container {
-            width: 100%;
-            max-width: 1200px;
+            width: 960px;
+            height: 540px;
+            max-width: calc(100vw - 48px);
+            max-height: calc(100vh - 48px);
             background-color: var(--container-bg);
             border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 32px;
-            box-shadow: 0 0 30px rgba(0,0,0,0.3);
+            border-radius: 10px;
+            padding: 18px 22px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
         }
 
-        h2 {
-            margin-top: 0;
-            font-size: 24px;
-            font-weight: 600;
-            color: var(--text-primary);
+        /* 标题栏 */
+        header {
             display: flex;
             align-items: center;
-            gap: 10px;
-            margin-bottom: 4px;
+            gap: 8px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid var(--border-color);
+            flex-shrink: 0;
         }
-        
-        h2 svg { fill: var(--text-primary); }
 
-        .subtitle {
+        header h1 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        header h1 svg {
+            fill: var(--text-primary);
+        }
+
+        header .version {
+            margin-left: auto;
+            font-size: 12px;
             color: var(--text-secondary);
-            font-size: 14px;
-            margin-bottom: 24px;
+        }
+
+        /* 主布局：左1右2 */
+        .main-layout {
+            display: flex;
+            gap: 20px;
+            flex: 1;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        .left-panel {
+            width: 33.33%;
+            min-width: 240px;
+            max-width: 320px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            overflow: hidden;
+        }
+
+        .right-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            overflow: hidden;
+        }
+
+        /* 区块标题 */
+        .section-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
         }
 
         /* 拖拽上传区 */
         .upload-zone {
             border: 2px dashed var(--border-color);
             border-radius: 10px;
-            padding: 32px 20px;
+            padding: 24px 16px;
             text-align: center;
             cursor: pointer;
             transition: all 0.25s ease;
-            margin-bottom: 20px;
             position: relative;
             background: rgba(13, 17, 23, 0.5);
         }
@@ -86,27 +140,27 @@
         }
 
         .upload-zone.dragover {
-            border-color: var(--dropzone-border);
-            background: var(--dropzone-bg);
-            transform: scale(1.005);
+            border-color: var(--success-color);
+            background: rgba(35, 134, 54, 0.08);
         }
 
         .upload-icon {
-            width: 48px; height: 48px;
-            margin: 0 auto 12px;
-            opacity: 0.5;
+            width: 36px;
+            height: 36px;
+            margin: 0 auto 8px;
+            opacity: 0.45;
         }
 
         .upload-text {
-            font-size: 15px;
+            font-size: 14px;
             color: var(--text-secondary);
-            margin-bottom: 4px;
         }
 
         .upload-hint {
-            font-size: 12px;
+            font-size: 11px;
             color: var(--text-secondary);
-            opacity: 0.7;
+            opacity: 0.6;
+            margin-top: 4px;
         }
 
         .upload-zone input[type="file"] {
@@ -116,224 +170,295 @@
             cursor: pointer;
         }
 
+        /* 文件信息条 */
         .file-info {
             display: none;
             align-items: center;
-            gap: 8px;
-            padding: 10px 16px;
-            background: rgba(35, 134, 54, 0.1);
-            border: 1px solid rgba(35, 134, 54, 0.25);
-            border-radius: 8px;
-            margin-bottom: 16px;
-            font-size: 13px;
-            animation: fadeIn 0.3s ease;
+            gap: 6px;
+            padding: 8px 12px;
+            background: rgba(35, 134, 54, 0.08);
+            border: 1px solid rgba(35, 134, 54, 0.2);
+            border-radius: 6px;
+            font-size: 12px;
+            animation: fadeIn 0.25s ease;
         }
 
-        .file-info.show { display: flex; }
+        .file-info.show {
+            display: flex;
+        }
 
-        .file-info .file-name { color: var(--success-color); font-weight: 500; }
+        .file-info .file-name {
+            color: var(--success-color);
+            font-weight: 500;
+        }
 
-        @keyframes fadeIn { from {opacity:0;transform:translateY(-4px);} to {opacity:1;transform:translateY(0);} }
+        @keyframes fadeIn {
+            from {
+                opacity: 0
+            }
 
-        /* 选项栏 */
-        .options-bar {
-            margin-bottom: 16px;
+            to {
+                opacity: 1
+            }
+        }
+
+        /* 粘贴区 */
+        .paste-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        textarea {
+            width: 100%;
+            flex: 1;
+            background: var(--input-bg);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 13px;
+            font-family: ui-monospace, "Consolas", monospace;
+            font-size: 13px;
+            resize: none;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        textarea:focus {
+            border-color: var(--focus-ring);
+            box-shadow: 0 0 0 3px rgba(88, 166, 255, .25);
+        }
+
+        textarea::placeholder {
+            color: #484f58;
+        }
+
+        /* 右侧结果区 */
+        .result-header {
             display: flex;
             align-items: center;
-            gap: 12px;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            flex-shrink: 0;
+        }
+
+        .result-header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
             flex-wrap: wrap;
         }
 
-        .options-bar label {
+        .result-count {
             font-size: 14px;
-            color: var(--text-secondary);
-            font-weight: 500;
+            font-weight: 600;
         }
 
-        select {
-            background-color: var(--input-bg);
-            color: var(--text-primary);
-            border: 1px solid var(--border-color);
+        .result-count b {
+            color: var(--success-color);
+        }
+
+        /* 格式单选 */
+        .fmt-group {
+            display: inline-flex;
+            gap: 4px;
+            background: var(--input-bg);
             border-radius: 6px;
-            padding: 6px 32px 6px 12px;
-            font-size: 14px;
-            outline: none;
-            transition: border-color 0.2s, box-shadow 0.2s;
-            appearance: none;
-            cursor: pointer;
-            background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238b949e' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 8px center;
+            padding: 2px;
+            border: 1px solid var(--border-color);
         }
 
-        select:focus { border-color: var(--focus-ring); box-shadow: 0 0 0 3px rgba(88,166,255,.3); }
-        select option { background-color: var(--bg-color); color: var(--text-primary); }
-
-        /* 双栏布局 */
-        .split-layout { display: flex; gap: 24px; flex-wrap: wrap; }
-        .pane { flex: 1; min-width: 300px; display: flex; flex-direction: column; }
-
-        .pane-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
+        .fmt-opt {
+            cursor: pointer;
+            font-size: 13px;
             color: var(--text-secondary);
-            font-size: 14px;
+            padding: 5px 12px;
+            border-radius: 4px;
+            transition: all 0.15s;
+            user-select: none;
+        }
+
+        .fmt-opt:hover {
+            color: var(--text-primary);
+        }
+
+        .fmt-opt input[type="radio"] {
+            display: none;
+        }
+
+        .fmt-opt.active {
+            background: var(--focus-ring);
+            color: #fff;
             font-weight: 500;
         }
 
-        textarea, .result-box {
-            width: 100%;
+        .result-box {
             flex: 1;
-            min-height: 360px;
-            background-color: var(--input-bg);
-            color: var(--text-primary);
+            background: var(--input-bg);
             border: 1px solid var(--border-color);
             border-radius: 8px;
             padding: 14px;
-            font-family: ui-monospace, SFMono-Regular, "Consolas", monospace;
-            font-size: 13px;
-            line-height: 1.6;
-            box-sizing: border-box;
-            transition: border-color 0.2s, box-shadow 0.2s;
-        }
-
-        textarea { resize: none; }
-        textarea:focus { outline: none; border-color: var(--focus-ring); box-shadow: 0 0 0 3px rgba(88,166,255,.3); }
-        textarea::placeholder { color: #484f58; }
-
-        .result-box {
             overflow-y: auto;
             word-break: break-all;
             white-space: pre-wrap;
+            font-family: ui-monospace, "Consolas", monospace;
+            font-size: 13px;
+            line-height: 1.7;
+            color: var(--text-secondary);
+            transition: border-color 0.2s;
         }
-        .result-box.has-content { border-color: var(--btn-primary-bg); }
+
+        .result-box.has-content {
+            border-color: var(--btn-primary-bg);
+            color: var(--text-primary);
+        }
 
         /* 按钮 */
         button {
             border-radius: 6px;
             cursor: pointer;
-            transition: background 0.2s, border 0.2s, opacity 0.2s;
+            transition: all 0.15s;
             display: inline-flex;
             align-items: center;
-            justify-content: center;
             gap: 6px;
             font-weight: 500;
             font-size: 13px;
-            line-height: 20px;
             border: 1px solid transparent;
         }
-        button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        button:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+        }
 
         button.primary {
             background: var(--btn-primary-bg);
-            color: var(--btn-primary-text);
-            padding: 5px 14px;
+            color: #fff;
+            padding: 7px 16px;
         }
-        button.primary:hover:not(:disabled) { background: var(--btn-primary-hover); }
+
+        button.primary:hover:not(:disabled) {
+            background: var(--btn-primary-hover);
+        }
 
         button.secondary {
-            background: var(--btn-secondary-bg);
-            color: var(--text-primary);
+            background: transparent;
+            color: var(--text-secondary);
             border-color: var(--border-color);
-            padding: 5px 14px;
+            padding: 4px 12px;
+            font-size: 11px;
         }
-        button.secondary:hover:not(:disabled) { background: var(--btn-secondary-hover); border-color: #8b949e; }
-        button.secondary svg, button.primary svg { fill: currentColor; }
+
+        button.secondary:hover:not(:disabled) {
+            color: var(--text-primary);
+            border-color: var(--text-secondary);
+        }
+
+        button svg {
+            fill: currentColor;
+        }
 
         /* 分隔线 */
-        .divider {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin: 18px 0 12px;
-            color: var(--text-secondary);
-            font-size: 12px;
-        }
-        .divider::before, .divider::after {
-            content: '';
-            flex: 1;
+        .sep {
             height: 1px;
             background: var(--border-color);
+            margin: 6px 0;
         }
 
-        /* Tab 切换 */
-        .tabs {
-            display: flex;
-            gap: 0;
-            margin-bottom: 16px;
-            border-bottom: 1px solid var(--border-color);
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .main-layout {
+                flex-direction: column;
+            }
+
+            .left-panel {
+                width: 100%;
+                min-width: 0;
+                max-height: 40%;
+            }
+
+            body {
+                padding: 12px 10px;
+            }
         }
-        .tab {
-            padding: 8px 20px;
-            cursor: pointer;
-            color: var(--text-secondary);
-            font-size: 14px;
-            font-weight: 500;
-            border-bottom: 2px solid transparent;
-            margin-bottom: -1px;
-            transition: all 0.2s;
-            user-select: none;
-        }
-        .tab:hover { color: var(--text-primary); }
-        .tab.active { color: var(--text-primary); border-bottom-color: var(--focus-ring); }
     </style>
 </head>
+
 <body>
     <div class="container">
-        <h2>
-            <svg width="26" height="26" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
-            CDK 自动提炼工具
-        </h2>
+        <header>
+            <h1>
+                <svg width="20" height="20" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd"
+                        d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" />
+                </svg>
+                CDK 提炼工具
+            </h1>
+        </header>
 
-        <!-- 方式切换 -->
-        <div class="tabs">
-            <div class="tab active" onclick="switchTab('file')" id="tab-file">📁 文件导入（推荐）</div>
-            <div class="tab" onclick="switchTab('paste')" id="tab-paste">📋 粘贴文本</div>
-        </div>
+        <div class="main-layout">
+            <!-- 左侧：输入 (1/3) -->
+            <div class="left-panel">
+                <!-- 文件上传 -->
+                <div>
+                    <div class="section-title">文件导入</div>
+                    <div class="upload-zone" id="dropzone">
+                        <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="#8b949e" stroke-width="1.5">
+                            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+                            <polyline points="17 8 12 3 7 8" />
+                            <line x1="12" y1="3" x2="12" y2="15" />
+                        </svg>
+                        <div class="upload-text">拖拽文件到此处</div>
+                        <div class="upload-hint">支持 .zip / .xlsx / .xls / .csv</div>
+                        <input type="file" id="file-input" accept=".zip,.xlsx,.xls,.csv">
+                    </div>
+                    <div class="file-info" id="file-info">
+                        <svg width="16" height="16" fill="var(--success-color)" viewBox="0 0 16 16">
+                            <path
+                                d="M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 10.94l6.72-6.72a.75.75 0 011.06 0z" />
+                        </svg>
+                        <span class="file-name" id="loaded-filename"></span>
+                        <button class="secondary" style="margin-left:auto;" onclick="clearFile()">清除</button>
+                    </div>
+                </div>
 
-        <!-- 文件导入模式 -->
-        <div id="panel-file">
-            <div class="upload-zone" id="dropzone">
-                <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="#8b949e" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                <div class="upload-text">拖拽文件到此处，或点击选择文件</div>
-                <div class="upload-hint">支持 .zip / .xlsx / .xls / .csv 文件</div>
-                <input type="file" id="file-input" accept=".zip,.xlsx,.xls,.csv">
+                <div class="sep"></div>
+
+                <!-- 粘贴文本 -->
+                <div class="paste-area">
+                    <div class="section-title">或直接粘贴文本</div>
+                    <textarea id="input"
+                        placeholder="粘贴包含 CDK 的文本...&#10;&#10;例如：&#10;订单号: 12345&#10;CDK: ABCDE-FGHIJ-KLMNO-PQRST-UVWXY"></textarea>
+                </div>
             </div>
-            <div class="file-info" id="file-info">
-                <svg width="16" height="16" fill="var(--success-color)" viewBox="0 0 16 16"><path d="M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 10.94l6.72-6.72a.75.75 0 011.06 0z"/></svg>
-                已加载：<span class="file-name" id="loaded-filename"></span>
-                <button class="secondary" style="margin-left:auto;padding:2px 8px;font-size:12px;" onclick="clearFile()">清除</button>
-            </div>
-        </div>
 
-        <!-- 粘贴模式 -->
-        <div id="panel-paste" style="display:none;">
-            <textarea id="input" placeholder="将文本粘贴到这里...&#10;&#10;例如: 感谢您的购买 12345-ABCDE-12345-ABCDE-12345"></textarea>
-        </div>
+            <!-- 右侧：结果 (2/3) -->
+            <div class="right-panel">
+                <div class="result-header">
+                    <div class="result-header-left">
+                        <span class="result-count">提取到 <b id="count">0</b> 个 CDK</span>
 
-        <!-- 格式选项 -->
-        <div class="options-bar">
-            <label for="format-select">输出格式：</label>
-            <select id="format-select" onchange="extractCDK()">
-                <option value="comma">英文逗号分隔 (CDK1,CDK2)</option>
-                <option value="newline">每行一个</option>
-                <option value="space">空格分隔</option>
-                <option value="semicolon">分号分隔</option>
-            </select>
-        </div>
-
-        <div class="split-layout">
-            <div class="pane flex-col">
-                <div class="pane-header">
-                    <span>提取结果：<span id="count" style="color:var(--text-primary);font-weight:bold;margin-left:4px;">0</span> 个</span>
+                        <div class="fmt-group">
+                            <label class="fmt-opt active" onclick="setFmt(this,'comma')"><input type="radio" name="fmt"
+                                    value="comma" checked> 逗号分隔</label>
+                            <label class="fmt-opt" onclick="setFmt(this,'newline')"><input type="radio" name="fmt"
+                                    value="newline"> 换行</label>
+                        </div>
+                    </div>
                     <button class="primary" onclick="copyResult()" id="copy-btn" disabled>
-                        <svg width="14" height="14" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z"/><path fill-rule="evenodd" d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z"/></svg>
-                        复制结果
+                        <svg width="15" height="15" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd"
+                                d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z" />
+                            <path fill-rule="evenodd"
+                                d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z" />
+                        </svg>
+                        复制
                     </button>
                 </div>
-                <div class="result-box" id="result">等待提取...</div>
+                <div class="result-box" id="result">等待数据输入...</div>
             </div>
         </div>
     </div>
@@ -342,179 +467,105 @@
         let currentResult = "";
         let rawTextData = "";
 
-        // ========== Tab 切换 ==========
-        function switchTab(tab) {
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.getElementById(`tab-${tab}`).classList.add('active');
-
-            if (tab === 'file') {
-                document.getElementById('panel-file').style.display = '';
-                document.getElementById('panel-paste').style.display = 'none';
-            } else {
-                document.getElementById('panel-file').style.display = 'none';
-                document.getElementById('panel-paste').style.display = '';
-            }
+        // ========== 格式切换 ==========
+        function setFmt(el, val) {
+            document.querySelectorAll('.fmt-opt').forEach(o => o.classList.remove('active'));
+            el.classList.add('active');
+            extractCDK();
         }
 
         // ========== 文件处理 ==========
         const dropzone = document.getElementById('dropzone');
         const fileInput = document.getElementById('file-input');
 
-        dropzone.addEventListener('dragover', e => {
-            e.preventDefault();
-            dropzone.classList.add('dragover');
-        });
+        dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('dragover'); });
         dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
         dropzone.addEventListener('drop', e => {
-            e.preventDefault();
-            dropzone.classList.remove('dragover');
-            const file = e.dataTransfer.files[0];
-            if (file) processFile(file);
+            e.preventDefault(); dropzone.classList.remove('dragover');
+            if (e.dataTransfer.files[0]) processFile(e.dataTransfer.files[0]);
         });
-        fileInput.addEventListener('change', e => {
-            if (e.target.files[0]) processFile(e.target.files[0]);
-        });
+        fileInput.addEventListener('change', e => { if (e.target.files[0]) processFile(e.target.files[0]); });
 
         async function processFile(file) {
             const ext = file.name.split('.').pop().toLowerCase();
-            if (!['zip','xlsx','xls','csv'].includes(ext)) {
-                alert('请选择 .zip / .xlsx / .xls / .csv 文件');
-                return;
-            }
+            if (!['zip', 'xlsx', 'xls', 'csv'].includes(ext)) { alert('不支持的文件类型'); return; }
 
             try {
                 let allText = "";
-
                 if (ext === 'zip') {
                     allText = await processZip(file);
                 } else {
                     const data = await readFileAsArrayBuffer(file);
-                    const workbook = XLSX.read(data, { type: 'array' });
-                    workbook.SheetNames.forEach(name => {
-                        allText += XLSX.utils.sheet_to_csv(workbook.Sheets[name]) + "\n";
-                    });
+                    const wb = XLSX.read(data, { type: 'array' });
+                    wb.SheetNames.forEach(name => { allText += XLSX.utils.sheet_to_csv(wb.Sheets[name]) + "\n"; });
                 }
-
                 rawTextData = allText;
                 document.getElementById('file-info').classList.add('show');
                 document.getElementById('loaded-filename').textContent = `${file.name} (${formatSize(file.size)})`;
                 extractCDK();
-            } catch (err) {
-                alert('文件解析失败：' + err.message);
-            }
+            } catch (err) { alert('解析失败: ' + err.message); }
         }
 
-        // ========== ZIP 解压 + 表格提取 ==========
         async function processZip(file) {
-            const arrayBuf = await readFileAsArrayBuffer(file);
-            const zip = await JSZip.loadAsync(arrayBuf);
-
-            const sheetExts = ['xlsx', 'xls', 'csv'];
-            const filesFound = [];
-
-            // 递归查找所有表格文件
-            zip.forEach((relativePath, entry) => {
-                if (!entry.dir) {
-                    const nameExt = relativePath.split('.').pop().toLowerCase();
-                    if (sheetExts.includes(nameExt)) {
-                        filesFound.push({ path: relativePath, ext: nameExt });
-                    }
-                }
-            });
-
-            if (filesFound.length === 0) throw new Error('ZIP 中未找到表格文件 (.xlsx/.xls/.csv)');
-
-            let allText = "";
-            for (const f of filesFound) {
-                const blob = await zip.file(f.path).async("arraybuffer");
+            const zip = await JSZip.loadAsync(await readFileAsArrayBuffer(file));
+            let found = [];
+            zip.forEach((p, e) => { if (!e.dir && ['xlsx', 'xls', 'csv'].includes(p.split('.').pop().toLowerCase())) found.push(p); });
+            if (!found.length) throw new Error('ZIP 中无表格文件');
+            let txt = "";
+            for (const p of found) {
                 try {
-                    const wb = XLSX.read(blob, { type: 'array' });
-                    wb.SheetNames.forEach(name => {
-                        allText += XLSX.utils.sheet_to_csv(wb.Sheets[name]) + "\n";
-                    });
-                } catch (e) {
-                    console.warn(`跳过解析失败的文件: ${f.path}`, e);
-                }
+                    const wb = XLSX.read(await zip.file(p).async("arraybuffer"), { type: 'array' });
+                    wb.SheetNames.forEach(n => { txt += XLSX.utils.sheet_to_csv(wb.Sheets[n]) + "\n"; });
+                } catch (_) { }
             }
-            return allText;
+            return txt;
         }
 
-        function readFileAsArrayBuffer(file) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onload = e => resolve(new Uint8Array(e.target.result));
-                reader.onerror = reject;
-                reader.readAsArrayBuffer(file);
-            });
+        function readFileAsArrayBuffer(f) {
+            return new Promise((res, rej) => { const r = new FileReader(); r.onload = e => res(new Uint8Array(e.target.result)); r.onerror = rej; r.readAsArrayBuffer(f); });
         }
 
-        function clearFile() {
-            rawTextData = "";
-            fileInput.value = '';
-            document.getElementById('file-info').classList.remove('show');
-            currentResult = "";
-            updateResult([], true);
-        }
+        function clearFile() { rawTextData = ""; fileInput.value = ''; document.getElementById('file-info').classList.remove('show'); updateResult([], true); }
+        function formatSize(b) { return b < 1024 ? b + ' B' : b < 1048576 ? (b / 1024).toFixed(1) + ' KB' : (b / 1048576).toFixed(1) + ' MB'; }
 
-        function formatSize(bytes) {
-            return bytes < 1024 ? bytes + ' B'
-                 : bytes < 1048576 ? (bytes/1024).toFixed(1) + ' KB'
-                 : (bytes/1048576).toFixed(1) + ' MB';
-        }
-
-        // ========== CDK 提取核心逻辑 ==========
+        // ========== 核心 ==========
         function extractCDK() {
-            // 数据来源：文件 > 粘贴文本
             const text = rawTextData || document.getElementById('input').value || "";
-            const regex = /[A-Z0-9]{5}-[A-Z0-9]{5}-[A-Z0-9]{5}-[A-Z0-9]{5}-[A-Z0-9]{5}/gi;
-            const matches = text.match(regex);
-            updateResult(matches || []);
+            const m = text.match(/[A-Z0-9]{5}-[A-Z0-9]{5}-[A-Z0-9]{5}-[A-Z0-9]{5}-[A-Z0-9]{5}/gi);
+            updateResult(m || []);
         }
 
-        function updateResult(cdkList, empty = false) {
-            const resultBox = document.getElementById('result');
-            const countSpan = document.getElementById('count');
-            const format = document.getElementById('format-select').value;
-            const copyBtn = document.getElementById('copy-btn');
+        function updateResult(list, empty = false) {
+            const rb = document.getElementById('result'), cs = document.getElementById('count'), cb = document.getElementById('copy-btn');
+            const fmt = document.querySelector('input[name="fmt"]:checked').value;
 
-            if (!empty && cdkList.length > 0) {
-                const unique = [...new Set(cdkList.map(s => s.toUpperCase()))];
-
-                const formatters = {
-                    comma: () => unique.join(','),
-                    newline: () => unique.join('\n'),
-                    space: () => unique.join(' '),
-                    semicolon: () => unique.join(';')
-                };
-
-                currentResult = formatters[format]();
-
-                resultBox.innerText = currentResult;
-                resultBox.classList.add('has-content');
-                countSpan.innerText = unique.length;
-                copyBtn.disabled = false;
+            if (!empty && list.length) {
+                const u = [...new Set(list.map(s => s.toUpperCase()))];
+                currentResult = fmt === 'comma' ? u.join(',') : u.join('\n');
+                rb.textContent = currentResult;
+                rb.classList.add('has-content');
+                cs.textContent = u.length;
+                cb.disabled = false;
             } else {
                 currentResult = "";
-                resultBox.innerText = "未找到符合条件的 CDK";
-                resultBox.classList.remove('has-content');
-                countSpan.innerText = 0;
-                copyBtn.disabled = true;
+                rb.textContent = "未找到符合条件的 CDK";
+                rb.classList.remove('has-content');
+                cs.textContent = "0";
+                cb.disabled = true;
             }
         }
 
-        // ========== 复制 ==========
         function copyResult() {
             if (!currentResult) return;
             navigator.clipboard.writeText(currentResult).then(() => {
-                const btn = document.getElementById('copy-btn');
-                const orig = btn.innerHTML;
+                const btn = document.getElementById('copy-btn'), orig = btn.innerHTML;
                 btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 10.94l6.72-6.72a.75.75 0 011.06 0z"/></svg> 已复制!`;
                 setTimeout(() => btn.innerHTML = orig, 2000);
-            }).catch(() => alert('复制失败，请手动选择'));
+            }).catch(() => alert('复制失败'));
         }
 
-        // 粘贴时自动提取
-        document.getElementById('input')?.addEventListener('input', extractCDK);
+        document.getElementById('input')?.addEventListener('input', () => { rawTextData = ''; extractCDK(); });
     </script>
 </body>
+
 </html>
