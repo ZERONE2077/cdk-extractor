@@ -690,7 +690,7 @@
 
         function extractCDK() {
             const text = rawTextData || document.getElementById('input').value || "";
-            const matches = text.match(/\b[A-Z0-9]{5}(?:-[A-Z0-9]{5}){4}\b/gi);
+            const matches = text.match(/\b[A-Z0-9]{5}(?:-[A-Z0-9]{5}){3,4}\b/gi);
             updateResult(matches || [], text.trim() === "");
         }
 
